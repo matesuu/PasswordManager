@@ -1,8 +1,31 @@
+#Welcome to the MYLogin project. Currently, this is an attempt to create a full application so progress is limited to functionaity at the moment. Will comment out all of the code at some point.
+
 import os
 import json
 import datetime
 
-def configure() -> str:
+def clear(): #clears console and checks to see what os is being used
+
+        if os.name == 'nt': # windows
+                
+                os.system('cls')
+                
+        else: #mac/linux
+                os.system('clear')
+
+def icon():
+
+        print(str(datetime.datetime.now()) + """
+                            _
+ __  ___    ___            |+|                       
+|  \/  \ \ / / |   ___ __ _ _ _ _
+| |\/| |\ V /| |__| _ / _` | | '  \                        
+|_|  |_| |_| |____|___\__, |_|_||_|
+                      |___/ 
+        """) # prints icon
+                
+
+def configure() -> str: # gets username and path used for backups
 
         my_name = "NULL"
         
@@ -12,18 +35,22 @@ def configure() -> str:
 
                 if this_user['user'] == "NULL":
 
-                        os.system('clear')
+                        clear()
                         this_user['user'] = input("Enter a Username: ")
                         my_name = this_user['user']
+                        
                 else:
+                        
                         my_name = this_user['user']
 
                 if this_user['backup_path'] == "NULL":
 
                         
-                        path_input = input("\nEnter Path of backups Folder: \n")
-                        cleaned_path = path_input.replace(' ','')
-                
+                        #path_input = input("\nEnter Path of backups Folder (ex: /home/username/Applications/PasswordManager/backups) :\n")                    
+                        
+                        #cleaned_path = path_input.replace(' ','')
+
+                        cleaned_path = str(os.getcwd()) + "/backups"
                         this_user['backup_path'] = cleaned_path
 
                 if this_user['date_created'] == "NULL":
@@ -32,6 +59,7 @@ def configure() -> str:
 
                 
                 with open('data.json', 'w') as user_data:
+                        
                         json.dump(this_user, user_data, indent=4)
         
 
@@ -41,38 +69,25 @@ def configure() -> str:
 
 def menu():
         
-        os.system('clear')
-        print(datetime.datetime.now())
+        clear()
+        icon()
         
-        print("\nWelcome to LoginManger. This is a lightweight command line interface application intended to store user information with associated client login information. Enter 'help' to console to see list of available operations.\n")
-
-        print("Known Clients: \n")
-
-        with open('data.json') as outfile:
-                clients = json.load(outfile)
-
-        for client in clients['data_entries']:
-
-                for names in client.values():
-
-                        print(names['client'])
-
-        print("\n")
+        print("Welcome to MYLogin. This is a lightweight command line interface application intended to store user information with associated client login information. Enter 'help' to console to see the list of supported operations.\n")
+        
 
 
 def help():
         
-        os.system('clear')
-        print(datetime.datetime.now())
+        clear()
+        icon()
         
-        print("\nmenu - returns to main menu")
-        print("login - automate login into a client from the command line")
+        print("menu - returns to main menu")
         print("display - displays all current clients as a list")
         print("fetch - returns all associated login information with a given client")
-        print("add - adds a client-password pair to dictionary - Optional Flag -> [-all] fetches all clients")
+        print("add - adds a client-password pair to dictionary - Optional Flags: [-all] [-client]")
         print("remove - removes a specified cient password pair from dictionary")
         print("edit - change a pre-existing password with an associated client")
-        print("clear - deletes all currently existing client-password pairs held within data file")
+        print("reset - deletes all currently existing client-password pairs held within data file")
         print("backup - writes current data to a new backup to be stored in backups folder")
         print("restore - restores data from a given backup")
         print("version - displays version info and credits")
@@ -80,18 +95,21 @@ def help():
 
 
 def info():
-        os.system('clear')
-        print(datetime.datetime.now())
+        
+        clear()
+        icon()
 
-        print("\nLoginManager (v.0.0.1)\nDate Created: 06/06/2024 - Written by matesuu\n")
+        print("\nMyLogin (v.0.0.1)\nDate Created: 06/06/2024 - Written by matesuu")
+        print("Fibonacci Yeah! (>_<)\n")
 
 
 def display():
 
-        os.system('clear')
+        clear()
+        icon()
 
-        print(datetime.datetime.now())
-        print("\nKnown Clients: \n")
+        
+        print("Known Clients: \n")
 
         with open('data.json') as outfile:
                 clients = json.load(outfile)
@@ -117,41 +135,24 @@ def fetch():
                 
         flag = False
 
-        if cleaned_input == "-a":
-
-                os.system('clear')
-                print("Clients Information: \n")
                 
-                for local_dicts in curr_data['data_entries']:
+        for local_dicts in curr_data['data_entries']:
 
-                        for keys in local_dicts.values():
+                for keys in local_dicts.values():
 
+                        if cleaned_input == keys['client']:
+
+                                clear()
+                                print("Client Information: \n")
                                 print("Client Name: " + keys['client'])
                                 print("Username: " + keys['username'])
                                 print("Password: " + keys['password'])
                                 print("Login URL: " + keys['url'])
-                                
                                 flag = True
-
-        else:
-                
-                for local_dicts in curr_data['data_entries']:
-
-                        for keys in local_dicts.values():
-
-                                if cleaned_input == keys['client']:
-
-                                        os.system('clear')
-                                        print("Client Information: \n")
-                                        print("Client Name: " + keys['client'])
-                                        print("Username: " + keys['username'])
-                                        print("Password: " + keys['password'])
-                                        print("Login URL: " + keys['url'])
-                                        flag = True
                                 
 
         if flag == False:
-                os.system('clear')
+                clear()
                 print("error: could not locate client\n")
                 
         print("\n")
@@ -159,7 +160,7 @@ def fetch():
 
 def fetch_all():
 
-        os.system('clear')
+        clear()
         print("Clients Information: \n")
 
         with open('data.json') as outfile:
@@ -180,30 +181,49 @@ def fetch_all():
 
 def add():
         
-        os.system('clear')
-        
         display()
+        flag = False
+
+        with open('data.json') as check_file:
+                check_data = json.load(check_file)
         
         new_client = input("Enter New Client: ")
-        new_username = input("Enter Username: ")
-        new_password = input("Enter Password: ")
-        new_url = input("Enter Login URL: ")
-        
-        cleaned_client = new_client.replace(' ','')
-        cleaned_username = new_username.replace(' ','')
-        cleaned_password = new_password.replace(' ','')
-        
-        new_entry = {"client" : cleaned_client, "username" : cleaned_username, "password" : cleaned_password, "url" : new_url}
-        new_dict = {cleaned_client : new_entry}
-        
-        with open('data.json', 'r+') as outfile:
-                outfile_data = json.load(outfile)
-                outfile_data['data_entries'].append(new_dict)
-                outfile.seek(0)
-                json.dump(outfile_data, outfile, indent=4)
+        cleaned_client = new_client.replace(' ', '')
 
-        display()
+        for entry in check_data['data_entries']:
+
+                for i in entry.values():
+
+                        if cleaned_client == i['client']:
+
+                                flag = True
         
+                
+        if flag == False:
+
+                new_username = input("Enter Username: ")
+                new_password = input("Enter Password: ")
+                new_url = input("Enter Login URL: ")
+
+                cleaned_username = new_username.replace(' ','')
+                cleaned_password = new_password.replace(' ','')
+                
+                new_entry = {"client" : cleaned_client, "username" : cleaned_username, "password" : cleaned_password, "url" : new_url}
+                new_dict = {cleaned_client : new_entry}
+        
+                with open('data.json', 'r+') as outfile:
+                        
+                        outfile_data = json.load(outfile)
+                        outfile_data['data_entries'].append(new_dict)
+                        outfile.seek(0)
+                        json.dump(outfile_data, outfile, indent=4)
+
+                display()
+                
+        else:
+
+                clear()
+                print("error: client already exists in directory\n")
 
 def remove():
 
@@ -231,7 +251,7 @@ def remove():
         with open('data.json', 'w') as json_file:
                 json.dump(curr_data, json_file, indent=4)
 
-        os.system('clear')
+        clear()
                 
        
         
@@ -264,7 +284,7 @@ def edit():
                         
                         if cleaned_input == i['client']:
                                 
-                                os.system('clear')
+                                clear()
                                 print(i['client'])
                                 edited_value = i['client']
                                 new_pass = input("\nEnter New Password: \n\n")
@@ -278,20 +298,20 @@ def edit():
        
         
         if flag == False:
-                os.system('clear')
+                clear()
                 print("error: could not locate client\n")
 
         else:
-                os.system('clear')
+                clear()
                 print("Edited Entry: " + edited_value + "\n")
 
         print("\n")
         
 
 
-def clear():
+def reset():
 
-        os.system('clear')
+        clear()
         print(datetime.datetime.now())
         
         user_input = input("\nAre you sure you want to delete all entries? (y/n)\n\n")
@@ -314,7 +334,7 @@ def clear():
         with open('data.json', 'w') as json_file:
                 json.dump(data, json_file, indent=4)
 
-        os.system('clear')
+        clear()
         
         if flag == True:
                 
@@ -326,41 +346,42 @@ def clear():
 
 def backup():
 
-        os.system('clear')
+        clear()
         curr_time = str(datetime.datetime.now())
 
-        with open('data.json') as file:
+        with open('data.json') as file: # opens data.json to read from file and store in dictionary 'data'
 
                 data = json.load(file)
                 
 
-        new_id = int(data['backups_made'])
-        new_id+=1
-        data['backups_made'] = str(new_id)
+        new_id = int(data['backups_made'])      # stores the current backup ID in new_id
+        new_id+=1                               # increments ID by 1
+        data['backups_made'] = str(new_id)      # casts new_id to string
         
 
-        with open('data.json', 'w') as update_id:
-                
+        with open('data.json', 'w') as update_id:       # opens data.json to write to file and dumps data, the only difference being 
+                                                        # the incremented ID
+                        
                 json.dump(data, update_id, indent=4)
 
-        path = data['backup_path']
-        data['date_created'] = str(datetime.datetime.now()) 
+        path = data['backup_path']                      # gets path of backup folder
+        data['date_created'] = str(datetime.datetime.now())     # stores the date of creation in 'date_created' as a string
         
 
-        new_json = open(path + '/backup-' + str(new_id) + '.json', 'x').close() 
+        new_json = open(path + '/backup-' + str(new_id) + '.json', 'x').close() # creates a new json file
         
-        with open(path + '/backup-' + str(new_id) + '.json','w') as json_file:
+        with open(path + '/backup-' + str(new_id) + '.json','w') as json_file:  # opens newly created json file and dumps data from current json file
                 
                 json.dump(data, json_file, indent=4)
 
 
-        os.system('clear')
+        clear()
         print("Created Backup at " + str(datetime.datetime.now()) + "\n")
         
 
 def restore():
 
-        os.system('clear')
+        clear()
         print(datetime.datetime.now())
 
         with open('data.json') as get_path:
@@ -383,14 +404,14 @@ def restore():
         with open('data.json', 'w') as restored_file:
                 json.dump(backup_data, restored_file, indent=4)
 
-        os.system('clear')
+        clear()
         print("Restored from Backup at " + str(datetime.datetime.now()))
         print("\n")
         
 
 def invalid_argument():
 
-        os.system('clear')
+        clear()
         
         print(datetime.datetime.now())
         print("\nerorr: command not found. For a list of supported comamnds, enter 'help' to console.\n")
@@ -399,8 +420,9 @@ def invalid_argument():
 
 my_username = configure()
 
-os.system("clear")
+clear()
 print("<STARTING> LoginManager v.0.0.1\n")
+changes = 0
 
 menu()
 
@@ -435,8 +457,8 @@ while True:
                 case "edit":
                         edit()
                         
-                case "clear":
-                        clear()
+                case "reset":
+                        reset()
 
                 case "backup":
                         backup()
@@ -457,6 +479,5 @@ while True:
                         invalid_argument()
                 
 
-os.system('clear')
-print("Application Terminated at " + str(datetime.datetime.now()))
-print("\nFibonacci Yeah! (>_<)\n")
+clear()
+print("Application Terminated at " + str(datetime.datetime.now()) + "\n")
