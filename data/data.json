@@ -1,0 +1,15 @@
+{
+    "data_entries": [
+        {
+            "newclient": {
+                "client": "newclient",
+                "username": "newpassword",
+                "password": "fuckyousethtobin",
+                "url": "newURL"
+            }
+        }
+    ],
+    "backup_path": "/Users/mateo/Desktop/MYLogin/backups",
+    "date_created": "2024-09-19 15:14:21.382233",
+    "backups_made": "3"
+}

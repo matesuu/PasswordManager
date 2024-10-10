@@ -1,0 +1,17 @@
+{
+    "data_entries": [
+        {
+            "pavlo.com": {
+                "client": "pavlo.com",
+                "username": "pavloiscool",
+                "password": "pavlo1234",
+                "url": "pavlo.com"
+            }
+        }
+    ],
+    "connections": [],
+    "user": "alsdfllas",
+    "backup_path": "/Users/mateo/Desktop/MYLogin/backups",
+    "date_created": "2024-09-19 15:14:21.382233",
+    "backups_made": "1"
+}
